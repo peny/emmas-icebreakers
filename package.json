@@ -1,0 +1,16 @@
+{
+  "name": "emmas-ice-breaker-kort",
+  "version": "1.0.0",
+  "description": "En interaktiv kortlek med ice breakers",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": ["ice-breakers", "cards", "interactive"],
+  "author": "Emma",
+  "license": "MIT"
+}
