@@ -63,6 +63,9 @@
             text-align: center;
             padding: 15px;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .card-back {
@@ -119,6 +122,10 @@
             color: #333;
             animation: slideIn 0.5s ease;
             margin-bottom: 10px;
+            flex-shrink: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         @keyframes slideIn {
@@ -190,7 +197,7 @@
             border-radius: 16px;
             border: 3px solid #333;
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            background: linear-gradient(45deg, #2c3e50, #3498db);
             color: white;
             font-size: 24px;
             font-weight: 700;
@@ -205,6 +212,38 @@
             background-image: 
                 repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px),
                 repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+            background-color: #2c3e50 !important;
+        }
+
+        @keyframes circleShuffle {
+            0% { 
+                transform: translateX(0) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            20% { 
+                transform: translateX(var(--circle-x)) translateY(var(--circle-y)) rotate(72deg);
+                opacity: 1;
+            }
+            40% { 
+                transform: translateX(var(--circle-x)) translateY(var(--circle-y)) rotate(144deg);
+                opacity: 1;
+            }
+            60% { 
+                transform: translateX(var(--circle-x)) translateY(var(--circle-y)) rotate(216deg);
+                opacity: 1;
+            }
+            80% { 
+                transform: translateX(var(--circle-x)) translateY(var(--circle-y)) rotate(288deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(0) translateY(0) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .shuffle-card-animating {
+            animation: circleShuffle 1.5s ease-in-out;
         }
 
 
@@ -331,19 +370,57 @@
 
         function shuffleAnimation() {
             const deckCard = document.getElementById('deckCard');
+            const deckContainer = document.getElementById('deck');
             
-            // Enkel blandningsanimation - bara huvudkortet rör sig
+            // Skapa 10 kort i en cirkel runt kortleken
+            const shuffleCards = [];
+            const radius = 300; // 300px avstånd från kortleken
+            
+            for (let i = 0; i < 10; i++) {
+                const card = document.createElement('div');
+                card.className = 'shuffle-card';
+                card.textContent = 'Emmas\nIcebreakers';
+                
+                // Beräkna position i cirkel
+                const angle = (i * 36) * (Math.PI / 180); // 36 grader mellan varje kort
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                // Sätt CSS custom properties för animationen
+                card.style.setProperty('--circle-x', x + 'px');
+                card.style.setProperty('--circle-y', y + 'px');
+                card.style.left = '0px';
+                card.style.top = '0px';
+                card.style.zIndex = i + 1;
+                card.style.opacity = '1';
+                card.style.backgroundColor = '#2c3e50';
+                
+                deckContainer.appendChild(card);
+                shuffleCards.push(card);
+            }
+            
+            // Starta blandningsanimation
             deckCard.classList.add('shuffling');
+            shuffleCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('shuffle-card-animating');
+                }, index * 50);
+            });
             
+            // Ta bort korten efter animationen är klar (1.5s + lite extra tid)
             setTimeout(() => {
                 deckCard.classList.remove('shuffling');
+                shuffleCards.forEach(card => {
+                    card.classList.remove('shuffle-card-animating');
+                    card.remove();
+                });
                 deck = shuffleArray(deck);
                 // Fusk: säkerställ att tredje kortet alltid är rätt
                 if (deck[2] !== "Ha analsex?") {
                     deck[2] = "Ha analsex?";
                 }
                 console.log("Tredje kortet är:", deck[2]);
-            }, 2000);
+            }, 2000); // 2 sekunder total tid
         }
 
         function drawCard() {
