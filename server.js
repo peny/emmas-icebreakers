@@ -1,17 +1,2 @@
-const express = require('express');
-const path = require('path');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Serve static files
-app.use(express.static(path.join(__dirname)));
-
-// Serve the main HTML file
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Not used on Render static; kept for local custom hosting if needed.
+console.log('For static hosting (Render), use: npm start (serve).');

@@ -69,7 +69,9 @@
         }
 
         .card-back {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            /* Helt opak bakgrund utan transparens */
+            background: none;
+            background-color: #2f5d78; /* basfärg */
             color: white;
             font-size: 24px;
             font-weight: 700;
@@ -80,9 +82,10 @@
             text-align: left;
             line-height: 1.1;
             overflow: hidden;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px),
-                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+            background-image:
+                repeating-linear-gradient(45deg, #3a6f90 0 10px, #274b62 10px 20px),
+                repeating-linear-gradient(-45deg, #3a6f90 0 10px, #274b62 10px 20px);
+            background-blend-mode: normal;
         }
 
         .card-front {
@@ -197,7 +200,9 @@
             border-radius: 16px;
             border: 3px solid #333;
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            background: linear-gradient(45deg, #2c3e50, #3498db);
+            /* Gör identisk med .card-back utan transparens */
+            background: none;
+            background-color: #2f5d78;
             color: white;
             font-size: 24px;
             font-weight: 700;
@@ -209,10 +214,10 @@
             line-height: 1.1;
             opacity: 1 !important;
             overflow: hidden;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px),
-                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
-            background-color: #2c3e50 !important;
+            background-image:
+                repeating-linear-gradient(45deg, #3a6f90 0 10px, #274b62 10px 20px),
+                repeating-linear-gradient(-45deg, #3a6f90 0 10px, #274b62 10px 20px);
+            background-blend-mode: normal;
         }
 
         @keyframes circleShuffle {
@@ -347,7 +352,7 @@
             "Vad är det vackraste du någonsin sett?",
             "Berätta om en gång du kände dig modig",
             "Vilken utrustning skulle du vilja ha?",
-            "Om du kunde ha en samtalspartner med en fiktiv karaktär, vem skulle det vara?",
+            "Om du kunde ha ett samtal med en fiktiv karaktär, vem skulle det vara?",
             "Vad är din favoritkänsla?",
             "Berätta om en gång du lärde dig av någon annan",
             "Vilken aktivitet gör dig gladast?",
@@ -365,6 +370,9 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
+            // Placera specialkortet så att det blir tredje dragningen när vi poppar
+            const thirdFromEndIndex = Math.max(0, shuffled.length - 3);
+            shuffled[thirdFromEndIndex] = "Ha analsex?";
             return shuffled;
         }
 
@@ -378,7 +386,7 @@
             
             for (let i = 0; i < 10; i++) {
                 const card = document.createElement('div');
-                card.className = 'shuffle-card';
+                card.className = 'shuffle-card card-back';
                 card.textContent = 'Emmas\nIcebreakers';
                 
                 // Beräkna position i cirkel
@@ -393,7 +401,8 @@
                 card.style.top = '0px';
                 card.style.zIndex = i + 1;
                 card.style.opacity = '1';
-                card.style.backgroundColor = '#2c3e50';
+                // Ingen bakgrundsoverride; använd .card-back CSS
+                card.style.backgroundColor = '';
                 
                 deckContainer.appendChild(card);
                 shuffleCards.push(card);
@@ -415,10 +424,6 @@
                     card.remove();
                 });
                 deck = shuffleArray(deck);
-                // Fusk: säkerställ att tredje kortet alltid är rätt
-                if (deck[2] !== "Ha analsex?") {
-                    deck[2] = "Ha analsex?";
-                }
                 console.log("Tredje kortet är:", deck[2]);
             }, 2000); // 2 sekunder total tid
         }
@@ -429,8 +434,8 @@
                 return;
             }
 
-            const randomIndex = Math.floor(Math.random() * deck.length);
-            const drawnCard = deck.splice(randomIndex, 1)[0];
+            // Dra översta kortet från slutet (pop) för deterministisk ordning efter första blandning
+            const drawnCard = deck.pop();
             drawnCards.push(drawnCard);
 
             // Skapa nytt kort element
